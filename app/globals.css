@@ -1,0 +1,127 @@
+@import "@fontsource/poppins";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --hero-strong: 0 0% 96%; /* Ivory White */
+    --hero-mild: 0 0% 95%; /* Ivory White */
+    --background: 0 0% 96%; /* Ivory White */
+    --foreground: 0 0% 4%; /* Bony Black */
+    --card: 0 0% 96%; /* Ivory White */
+    --card-foreground: 0 0% 4%; /* Bony Black */
+    --popover: 0 0% 96%; /* Ivory White */
+    --popover-foreground: 0 0% 4%; /* Bony Black */
+    --primary: 0 0% 4%; /* Bony Black */
+    --primary-foreground: 0 0% 96%; /* Ivory White */
+    --secondary: 0 0% 42%; /* Slate Gray */
+    --secondary-foreground: 0 0% 96%; /* Ivory White */
+    --muted: 0 0% 83%; /* Ashen Ochre */
+    --muted-foreground: 0 0% 42%; /* Slate Gray */
+    --accent: 0 0% 42%; /* Slate Gray */
+    --accent-foreground: 0 0% 96%; /* Ivory White */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 96%; /* Ivory White */
+    --border: 0 0% 83%; /* Ashen Ochre */
+    --input: 0 0% 83%; /* Ashen Ochre */
+    --ring: 0 0% 4%; /* Bony Black */
+    --radius: 0.5rem;
+    --chart-1: 0 0% 42%; /* Slate Gray */
+    --chart-2: 0 0% 22%; /* Burnt Umber */
+    --chart-3: 0 0% 4%; /* Bony Black */
+    --chart-4: 0 0% 83%; /* Ashen Ochre */
+    --chart-5: 0 0% 96%; /* Ivory White */
+  }
+
+  .dark {
+    --background: 0 0% 4%; /* Bony Black */
+    --foreground: 0 0% 96%; /* Ivory White */
+    --card: 0 0% 4%; /* Bony Black */
+    --card-foreground: 0 0% 96%; /* Ivory White */
+    --popover: 0 0% 4%; /* Bony Black */
+    --popover-foreground: 0 0% 96%; /* Ivory White */
+    --primary: 0 0% 96%; /* Ivory White */
+    --primary-foreground: 0 0% 4%; /* Bony Black */
+    --secondary: 0 0% 22%; /* Burnt Umber */
+    --secondary-foreground: 0 0% 96%; /* Ivory White */
+    --muted: 0 0% 22%; /* Burnt Umber */
+    --muted-foreground: 0 0% 83%; /* Ashen Ochre */
+    --accent: 0 0% 22%; /* Burnt Umber */
+    --accent-foreground: 0 0% 96%; /* Ivory White */
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 96%; /* Ivory White */
+    --border: 0 0% 22%; /* Burnt Umber */
+    --input: 0 0% 22%; /* Burnt Umber */
+    --ring: 0 0% 83%; /* Ashen Ochre */
+    --chart-1: 0 0% 42%; /* Slate Gray */
+    --chart-2: 0 0% 22%; /* Burnt Umber */
+    --chart-3: 0 0% 4%; /* Bony Black */
+    --chart-4: 0 0% 83%; /* Ashen Ochre */
+    --chart-5: 0 0% 96%; /* Ivory White */
+  }
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+}
+
+/* Hide Google Translate original UI elements */
+body > .skiptranslate > iframe.skiptranslate {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+body > .skiptranslate {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+body {
+    top: 0px !important; /* Remove top margin added by Google Translate */
+}
+#goog-gt-tt {
+  display: none !important; /* Hide the tooltip */
+}
+
+/* Custom scrollbar (optional, for aesthetics) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F5F5F5; /* Ivory White */
+}
+::-webkit-scrollbar-thumb {
+  background: #6B6565; /* Slate Gray */
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3A3535; /* Burnt Umber */
+}
+
+.prose {
+  @apply text-foreground;
+}
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  @apply text-foreground;
+}
+.prose strong {
+  @apply text-foreground;
+}
+.prose a {
+  @apply text-primary hover:text-primary-foreground;
+}
+
+/* Ensure chatbot doesn't get translated */
+#chatbot-assistant-container {
+  transform: none !important; /* Prevents Google Translate from hiding it sometimes */
+}
+.notranslate {
+    transform: none !important; /* Add to elements you don't want translated */
+}
