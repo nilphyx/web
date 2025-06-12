@@ -23,13 +23,13 @@ export default function PlatformSection() {
           iconSlot={<BrainCircuit className="text-white w-6 h-6" />}
           hasOverlay={true}
           buttonlink="/academy"
-          
         />
         <PlatformCard
           title="Data Center"
           description="Secure, scalable infrastructure for your data needs."
           imageSrc="/data-centre.jpg"
           iconSlot={<Server className="text-white w-6 h-6" />}
+          hasOverlay={true}
           buttonlink="/datacenter"
         />
         <PlatformCard
@@ -37,6 +37,7 @@ export default function PlatformSection() {
           description="Run computations and train models with scalable resources."
           imageSrc="/cloud-compute.png"
           iconSlot={<Cloud className="text-white w-6 h-6" />}
+          hasOverlay={true}
           buttonlink="/compute"
         />
       </div>

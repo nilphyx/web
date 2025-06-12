@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-import { useAuth, AuthState } from '@/lib/hooks/useAuth';
-import NavbarButton from './NavbarButton';
-import { DropdownMenu, Button } from '@radix-ui/themes';
-import { AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
-import { UserCircleIcon } from '@/components/icons';
+import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth, AuthState } from "@/lib/hooks/useAuth";
+import NavbarButton from "./NavbarButton";
+import { DropdownMenu, Button } from "@radix-ui/themes";
+import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
+import { UserCircleIcon } from "@/components/icons";
 
 const Header = () => {
   const { user, authState, logout } = useAuth();
@@ -21,17 +21,20 @@ const Header = () => {
   const handleLogout = async () => {
     await logout();
     setIsProfileDropdownOpen(false);
-    router.push('/');
+    router.push("/");
   };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+      if (
+        profileDropdownRef.current &&
+        !profileDropdownRef.current.contains(event.target as Node)
+      ) {
         setIsProfileDropdownOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -64,33 +67,70 @@ const Header = () => {
             className="bg-primary/50 text-white border border-gray-300 shadow-md rounded-md w-auto p-2"
             align="center"
           >
-            <DropdownMenu.Item className="focus:outline-none focus:ring-0 hover:bg-gray-200 hover:text-gray-600 rounded-md px-2">
-              <Link href="/datacenter">Data Center</Link>
+            <DropdownMenu.Item
+              asChild
+              className="focus:outline-none focus:ring-0 hover:bg-gray-200 hover:text-gray-600 rounded-md px-2"
+            >
+              <Link href="/datacenter" prefetch={true}>
+                Data Center
+              </Link>
             </DropdownMenu.Item>
-            <DropdownMenu.Item className="focus:outline-none focus:ring-0 hover:bg-gray-200 hover:text-gray-600 rounded-md px-2">
-              <Link href="/compute">Cloud Computing</Link>
+            <DropdownMenu.Item
+              asChild
+              className="focus:outline-none focus:ring-0 hover:bg-gray-200 hover:text-gray-600 rounded-md px-2"
+            >
+              <Link href="/compute" prefetch={true}>
+                Cloud Computing
+              </Link>
             </DropdownMenu.Item>
-            <DropdownMenu.Item className="focus:outline-none focus:ring-0 hover:bg-gray-200 hover:text-gray-600 rounded-md px-2">
-              <Link href="/academy">AI Academy</Link>
+            <DropdownMenu.Item
+              asChild
+              className="focus:outline-none focus:ring-0 hover:bg-gray-200 hover:text-gray-600 rounded-md px-2"
+            >
+              <Link href="/academy" prefetch={true}>
+                AI Academy
+              </Link>
             </DropdownMenu.Item>
             {user && (
-              <DropdownMenu.Item className="focus:outline-none focus:ring-0 hover:bg-gray-200 hover:text-gray-600 rounded-md px-2">
-                <Link href="/profile">Profile</Link>
+              <DropdownMenu.Item
+                asChild
+                className="focus:outline-none focus:ring-0 hover:bg-gray-200 hover:text-gray-600 rounded-md px-2"
+              >
+                <Link href="/profile" prefetch={true}>
+                  Profile
+                </Link>
               </DropdownMenu.Item>
             )}
-            <DropdownMenu.Item className="focus:outline-none focus:ring-0 hover:bg-gray-200 hover:text-gray-600 rounded-md px-2">
-              <Link href="/support">Support</Link>
+            <DropdownMenu.Item
+              asChild
+              className="focus:outline-none focus:ring-0 hover:bg-gray-200 hover:text-gray-600 rounded-md px-2"
+            >
+              <Link href="/support" prefetch={true}>
+                Support
+              </Link>
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
 
-        <Link href="/resources" className="hover:text-primary md:text-sm">
+        <Link
+          href="/resources"
+          prefetch={true}
+          className="hover:text-primary md:text-sm"
+        >
           Resources
         </Link>
-        <Link href="/community" className="hover:text-primary md:text-sm">
+        <Link
+          href="/community"
+          prefetch={true}
+          className="hover:text-primary md:text-sm"
+        >
           Community
         </Link>
-        <Link href="/faqs" className="hover:text-primary md:text-sm">
+        <Link
+          href="/faqs"
+          prefetch={true}
+          className="hover:text-primary md:text-sm"
+        >
           FAQs
         </Link>
       </div>
@@ -135,7 +175,7 @@ const Header = () => {
                   />
                 </svg>
               }
-              onClick={() => router.push('/login')}
+              onClick={() => router.push("/login")}
             >
               Log In
             </NavbarButton>
@@ -180,7 +220,7 @@ const Header = () => {
                   />
                 </svg>
               }
-              onClick={() => router.push('/signup')}
+              onClick={() => router.push("/signup")}
             >
               Sign Up
             </NavbarButton>
@@ -198,21 +238,38 @@ const Header = () => {
               <div className="absolute right-0 mt-2 w-48 origin-top-right bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
                 <div className="px-4 py-3">
                   <p className="text-sm text-neutral-700">Signed in as</p>
-                  <p className="text-sm font-medium text-neutral-900 truncate">{user.name || user.email}</p>
+                  <p className="text-sm font-medium text-neutral-900 truncate">
+                    {user.name || user.email}
+                  </p>
                 </div>
                 <div className="border-t border-neutral-200"></div>
-                <Link href="/profile" onClick={() => setIsProfileDropdownOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100">
+                <Link
+                  href="/profile"
+                  onClick={() => setIsProfileDropdownOpen(false)}
+                  className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"
+                >
                   Your Profile
                 </Link>
-                <Link href="/academy/my-courses" onClick={() => setIsProfileDropdownOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100">
+                <Link
+                  href="/academy/my-courses"
+                  onClick={() => setIsProfileDropdownOpen(false)}
+                  className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"
+                >
                   My Courses
                 </Link>
                 {user.isAdmin && (
-                  <Link href="/admin/dashboard" onClick={() => setIsProfileDropdownOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100">
+                  <Link
+                    href="/admin/dashboard"
+                    onClick={() => setIsProfileDropdownOpen(false)}
+                    className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"
+                  >
                     Admin Dashboard
                   </Link>
                 )}
-                <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100">
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"
+                >
                   Sign out
                 </button>
               </div>
@@ -280,10 +337,17 @@ const Header = () => {
           <div className="space-x-3 flex flex-col justify-center items-center">
             {authState === AuthState.UNAUTHENTICATED ? (
               <>
-                <NavbarButton bgColor="" textColor="text-white" onClick={() => router.push('/signup')}>
+                <NavbarButton
+                  bgColor=""
+                  textColor="text-white"
+                  onClick={() => router.push("/signup")}
+                >
                   Sign Up
                 </NavbarButton>
-                <NavbarButton bgColor="bg-gray" onClick={() => router.push('/login')}>
+                <NavbarButton
+                  bgColor="bg-gray"
+                  onClick={() => router.push("/login")}
+                >
                   Log In
                 </NavbarButton>
               </>
@@ -292,23 +356,42 @@ const Header = () => {
                 <div className="flex items-center mb-4">
                   <UserCircleIcon className="h-10 w-10 text-neutral-500" />
                   <div className="ml-3">
-                    <div className="text-base font-medium text-neutral-800">{user.name || user.email}</div>
-                    <div className="text-sm font-medium text-neutral-500">{user.email}</div>
+                    <div className="text-base font-medium text-neutral-800">
+                      {user.name || user.email}
+                    </div>
+                    <div className="text-sm font-medium text-neutral-500">
+                      {user.email}
+                    </div>
                   </div>
                 </div>
-                <Link href="/profile" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900">
+                <Link
+                  href="/profile"
+                  onClick={() => setMenuOpen(false)}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
+                >
                   Your Profile
                 </Link>
-                <Link href="/academy/my-courses" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900">
+                <Link
+                  href="/academy/my-courses"
+                  onClick={() => setMenuOpen(false)}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
+                >
                   My Courses
                 </Link>
                 {user.isAdmin && (
-                  <Link href="/admin/dashboard" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900">
+                  <Link
+                    href="/admin/dashboard"
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-3 py-2 rounded-md text-base font-medium text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
+                  >
                     Admin Dashboard
                   </Link>
                 )}
                 <button
-                  onClick={() => { handleLogout(); setMenuOpen(false); }}
+                  onClick={() => {
+                    handleLogout();
+                    setMenuOpen(false);
+                  }}
                   className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
                 >
                   Sign out

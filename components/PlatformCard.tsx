@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Button } from "@/components/Button"
+import { Button } from "@/components/Button";
 
 interface PlatformCardProps {
   title: string;
@@ -28,8 +28,10 @@ export default function PlatformCard({
           fill
           className="object-cover rounded-md"
         />
+        
+        {/* Gradient Overlay that can be switch on or off*/}
         {hasOverlay && (
-          <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A]/30 via-transparent to-transparent z-10 rounded-t-[8px]" />
+          <div className="absolute inset-0 z-10 bg-gradient-to-tr from-primary/80 to-primary/30" />
         )}
         {iconSlot && (
           <div className="absolute bottom-4 left-4 bg-primary p-2 rounded-md z-20">
@@ -46,10 +48,10 @@ export default function PlatformCard({
           {description}
         </p>
         <div>
-          <Button 
-            size="lg" 
-            variant="primary" 
-            onClick={() => window.location.href = buttonlink}
+          <Button
+            size="lg"
+            variant="primary"
+            onClick={() => (window.location.href = buttonlink)}
           >
             Get Started for Free
           </Button>

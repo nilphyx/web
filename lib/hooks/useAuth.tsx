@@ -127,7 +127,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [updateLocalStorage]);
 
   const login = async (email: string, password: string) => {
+
     setIsLoading(true);
+
+    if (!email || !password) {
+      throw new Error('Email and password are required');
+    }
+    
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
