@@ -38,7 +38,7 @@ export default function SignInPage() {
       }
 
       await login(email, password);
-      
+
       toast({
         title: "Login Successful",
         description: "Welcome back!",
@@ -48,7 +48,10 @@ export default function SignInPage() {
     } catch (error) {
       toast({
         title: "Login Failed",
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        description:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred",
         type: "destructive",
       });
     } finally {
@@ -65,14 +68,17 @@ export default function SignInPage() {
         className="object-cover z-0"
         priority
       />
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-tr from-primary/80 to-primary/30" />
 
+      {/* Right-side panel and login form */}
       <div className="absolute right-0 top-0 h-full w-full lg:w-1/2 z-10 bg-[#f5f5ffcc] backdrop-blur-sm px-6 py-10 sm:px-12 flex flex-col justify-between">
         <div className="w-full max-w-[570px] mx-auto">
           <div className="flex items-center space-x-2 mb-6">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#021488]">
-              Welcome <span className="text-black">Back</span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-primary">
+              Welcome <span className="text-secondary">Back</span>
             </h2>
-            <MdOutlineWavingHand className="text-[#021488] w-8 h-8" />
+            <MdOutlineWavingHand className="text-primary w-8 h-8" />
           </div>
 
           <p className="text-base sm:text-md font-medium text-black leading-[1.6] tracking-wide mb-10">
@@ -82,13 +88,15 @@ export default function SignInPage() {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-base font-normal mb-1">E-mail address:</label>
+              <label className="block text-base font-normal mb-1">
+                E-mail address:
+              </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-6 py-4 rounded-[40px] bg-[#EEEEFFB2] border border-[#021488] outline-none"
+                className="w-full px-6 py-4 rounded-[40px] bg-[#EEEEFFB2] border border-primary outline-none"
                 placeholder="you@example.com"
               />
             </div>
@@ -102,7 +110,7 @@ export default function SignInPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-6 py-4 rounded-[40px] bg-[#EEEEFFB2] border border-[#021488] outline-none pr-12"
+                className="w-full px-6 py-4 rounded-[40px] bg-[#EEEEFFB2] border border-primary outline-none pr-12"
                 placeholder="Your password"
               />
               <span
@@ -117,7 +125,7 @@ export default function SignInPage() {
               </span>
               <a
                 href="/forgot-password"
-                className="absolute top-0 right-0 text-[#021488] text-sm font-semibold"
+                className="absolute top-0 right-0 text-primary text-sm font-semibold"
               >
                 Forgot your password?
               </a>
@@ -126,7 +134,7 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 rounded-full text-white text-[20px] font-bold bg-[#021488] border border-[#000000cc] shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 rounded-full  text-[20px] font-bold bg-primary text-secondary border border-[#000000cc] shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Logging in..." : "Log In"}
             </button>
@@ -136,14 +144,14 @@ export default function SignInPage() {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="accent-[#021488]"
+                className="accent-primary text-secondary"
               />
               <label>Remember me</label>
             </div>
 
-            <p className="text-center text-base font-semibold">
+            <p className="text-center text-base font-semibold text-secondary">
               Don't have an account?{" "}
-              <a href="/sign-up" className="text-[#021488] underline">
+              <a href="/signup" className="text-primary underline">
                 Sign Up
               </a>
             </p>
@@ -157,8 +165,8 @@ export default function SignInPage() {
 
       <div className="hidden lg:absolute top-[35%] left-6 sm:left-12 z-10 text-white lg:block">
         <div className="flex items-center space-x-4">
-          <Image src="/white-favicon.png" alt="Logo" width={70} height={70} />
-          <h1 className="text-4xl sm:text-5xl font-extrabold">Leximpact</h1>
+          <Image src="/logo.png" alt="Logo" width={70} height={70} />
+          <h1 className="text-4xl sm:text-5xl font-extrabold">Nilphyx</h1>
         </div>
         <p className="mt-6 text-2xl sm:text-3xl font-semibold max-w-sm">
           Redefining Education & Innovation

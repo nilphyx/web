@@ -71,8 +71,8 @@ const ForgotPassword = () => {
         {/* Close Button */}
         <button
           //   onClick={() => window.history.back()}
-          onClick={() => router.push("/sign-in")}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#021488] text-white text-lg flex items-center justify-center"
+          onClick={() => router.push("/login")}
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-primary text-white text-lg flex items-center justify-center"
         >
           ×
         </button>
@@ -81,7 +81,7 @@ const ForgotPassword = () => {
         <img
           src="/logo.png"
           alt="Leximpact Logo"
-          className="mx-auto mb-4 w-40 h-16"
+          className="mx-auto mb-4 w-14 h-16"
         />
 
         {/* Title */}
@@ -103,13 +103,13 @@ const ForgotPassword = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-6 py-4 rounded-full border border-[#021488] outline-none"
+            className="w-full px-6 py-4 rounded-full border border-primary outline-none"
           />
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 rounded-full bg-[#021488] text-white font-semibold text-lg"
+            className="w-full py-3 rounded-full bg-primary text-secondary font-semibold text-lg"
           >
             {isSubmitting ? "Sending..." : "Send"}
           </button>
