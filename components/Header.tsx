@@ -245,6 +245,7 @@ const Header = () => {
                 <div className="border-t border-neutral-200"></div>
                 <Link
                   href="/profile"
+                  prefetch={true}
                   onClick={() => setIsProfileDropdownOpen(false)}
                   className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"
                 >
@@ -252,6 +253,7 @@ const Header = () => {
                 </Link>
                 <Link
                   href="/academy/my-courses"
+                  prefetch={true}
                   onClick={() => setIsProfileDropdownOpen(false)}
                   className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"
                 >
@@ -260,6 +262,7 @@ const Header = () => {
                 {user.isAdmin && (
                   <Link
                     href="/admin/dashboard"
+                    prefetch={true}
                     onClick={() => setIsProfileDropdownOpen(false)}
                     className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100"
                   >

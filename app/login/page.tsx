@@ -159,7 +159,7 @@ export default function SignInPage() {
         </div>
 
         <p className="text-center text-sm font-semibold text-black/60 mt-10">
-          © 2025 Leximpact. All rights reserved.
+          © 2025 Nilphyx. All rights reserved.
         </p>
       </div>
 

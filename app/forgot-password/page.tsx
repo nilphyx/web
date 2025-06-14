@@ -80,7 +80,7 @@ const ForgotPassword = () => {
         {/* Logo */}
         <img
           src="/logo.png"
-          alt="Leximpact Logo"
+          alt="nilphyx Logo"
           className="mx-auto mb-4 w-14 h-16"
         />
 
