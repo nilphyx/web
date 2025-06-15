@@ -23,6 +23,7 @@ export interface CourseModule {
 
 export interface Course {
   id: string;
+  slug: string;
   title: string;
   description: string;
   longDescription?: string;
@@ -31,7 +32,7 @@ export interface Course {
   tags: string[];
   imageUrl: string;
   modules: CourseModule[];
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
   prerequisites?: string[];
   learningOutcomes?: string[];
   estimatedDuration?: string; // e.g., "10 hours"

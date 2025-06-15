@@ -41,6 +41,7 @@ interface AuthContextType {
   signup: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   enrollCourse: (courseId: string) => Promise<void>;
+  enrollCourseBySlug: (courseId: string) => Promise<void>;
   unenrollCourse: (courseId: string) => Promise<void>;
   isEnrolled: (courseId: string) => boolean;
   enrolledCourses: EnrolledCourse[];
@@ -102,6 +103,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
             isAdmin: session.user.user_metadata?.isAdmin || false,
           });
           setAuthState(AuthState.AUTHENTICATED);
+          // Fetch enrollments and other data
+          await fetchEnrollments();
         } else {
           setUser(null);
           setAuthState(AuthState.UNAUTHENTICATED);
@@ -260,31 +263,104 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  // const enrollCourse = async (courseId: string) => {
+  //   if (!user) return;
+  //   if (!enrolledCoursesData.includes(courseId)) {
+  //     setEnrolledCoursesData((prev) => [...prev, courseId]);
+  //     setCourseProgressData((prev) => ({
+  //       ...prev,
+  //       [courseId]: { completedLessons: [] },
+  //     }));
+  //   }
+  // };
+
   const enrollCourse = async (courseId: string) => {
     if (!user) return;
-    if (!enrolledCoursesData.includes(courseId)) {
-      setEnrolledCoursesData((prev) => [...prev, courseId]);
-      setCourseProgressData((prev) => ({
-        ...prev,
-        [courseId]: { completedLessons: [] },
-      }));
+
+    const alreadyEnrolled = enrolledCoursesData.includes(courseId);
+    if (alreadyEnrolled) return;
+
+    // Create enrollment in DB
+    const { error } = await supabase.from("enrollments").insert([
+      {
+        student_id: user.id,
+        course_id: courseId,
+        enrolled_at: new Date().toISOString(),
+      },
+    ]);
+
+    if (error) {
+      console.error("Enrollment error:", error.message);
+      return;
     }
+
+    // Update local state
+    setEnrolledCoursesData((prev) => [...prev, courseId]);
+    setCourseProgressData((prev) => ({
+      ...prev,
+      [courseId]: { completedLessons: [] },
+    }));
   };
 
+  const enrollCourseBySlug = async (slug: string) => {
+    const course = allCoursesData.find((c) => c.slug === slug);
+    if (!course) {
+      console.error("Course not found for slug:", slug);
+      return;
+    }
+    await enrollCourse(course.id);
+  };
+
+  // const unenrollCourse = async (courseId: string) => {
+  //   if (!user) return;
+  //   setEnrolledCoursesData((prev) => prev.filter((id) => id !== courseId));
+  //   setCourseProgressData((prev) => {
+  //     const newProgress = { ...prev };
+  //     delete newProgress[courseId];
+  //     return newProgress;
+  //   });
+  //   setQuizSubmissionsData((prev) =>
+  //     prev.filter((submission) => {
+  //       const quiz = allQuizzesData.find((q) => q.id === submission.quizId);
+  //       return !(quiz && quiz.courseId === courseId);
+  //     })
+  //   );
+  //   setIssuedCertificatesData((prev) =>
+  //     prev.filter(
+  //       (cert) => cert.courseId !== courseId || cert.userId !== user.id
+  //     )
+  //   );
+  // };
   const unenrollCourse = async (courseId: string) => {
     if (!user) return;
+
+    // Remove from DB
+    const { error } = await supabase
+      .from("enrollments")
+      .delete()
+      .eq("student_id", user.id)
+      .eq("course_id", courseId);
+
+    if (error) {
+      console.error("Unenrollment error:", error.message);
+      return;
+    }
+
+    // Update local state
     setEnrolledCoursesData((prev) => prev.filter((id) => id !== courseId));
     setCourseProgressData((prev) => {
       const newProgress = { ...prev };
       delete newProgress[courseId];
       return newProgress;
     });
+
     setQuizSubmissionsData((prev) =>
       prev.filter((submission) => {
         const quiz = allQuizzesData.find((q) => q.id === submission.quizId);
         return !(quiz && quiz.courseId === courseId);
       })
     );
+
     setIssuedCertificatesData((prev) =>
       prev.filter(
         (cert) => cert.courseId !== courseId || cert.userId !== user.id
@@ -294,6 +370,115 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   const isEnrolled = (courseId: string) =>
     enrolledCoursesData.includes(courseId);
+
+  // const fetchEnrollments = async () => {
+  //   if (!user) return;
+
+  //   const { data, error } = await supabase
+  //     .from("enrollments")
+  //     .select("course_id, completed_at, certificate_id")
+  //     .eq("student_id", user.id);
+
+  //   if (error) {
+  //     console.error("Error fetching enrollments:", error.message);
+  //     return;
+  //   }
+
+  //   const enrolledCourseIds = data.map((enroll) => enroll.course_id);
+  //   setEnrolledCoursesData(enrolledCourseIds);
+  //   // optionally populate courseProgressData based on lesson_progress table too
+  // };
+  const fetchEnrollments = async () => {
+    if (!user) return;
+
+    try {
+      // 1. Fetch enrollments
+      const { data: enrollments, error: enrollmentsError } = await supabase
+        .from("enrollments")
+        .select("course_id");
+
+      if (enrollmentsError) throw enrollmentsError;
+
+      const enrolledCourseIds = enrollments.map((e) => e.course_id);
+      setEnrolledCoursesData(enrolledCourseIds);
+
+      // 2. Fetch lesson progress
+      const { data: progressData, error: progressError } = await supabase
+        .from("lesson_progress")
+        .select("course_id, lesson_id")
+        .eq("user_id", user.id);
+
+      if (progressError) throw progressError;
+
+      const courseProgressMap: CourseProgress = {};
+      for (const item of progressData) {
+        if (!courseProgressMap[item.course_id]) {
+          courseProgressMap[item.course_id] = { completedLessons: [] };
+        }
+        courseProgressMap[item.course_id].completedLessons.push(item.lesson_id);
+      }
+      setCourseProgressData(courseProgressMap);
+
+      // 3. Fetch issued certificates
+      // const { data: certData, error: certError } = await supabase
+      //   .from("certificates")
+      //   .select("id, course_id, user_id")
+      //   .eq("user_id", user.id);
+      //     const { data: certData, error: certError } = await supabase
+      //       .from("certificates")
+      //       .select(
+      //         `
+      //   id,
+      //   issued_at,
+      //   certificate_url,
+      //   enrollment_id,
+      //   enrollments (
+      //     course_id,
+      //     student_id,
+      //     courses (
+      //       title
+      //     ),
+      //     users:student_id (
+      //       first_name,
+      //       last_name
+      //     )
+      //   )
+      // `
+      //       )
+      //       .eq("enrollments.student_id", user.id);
+
+      //     if (certError) throw certError;
+
+      //     const enrichedCertificates: Certificate[] = (certData || []).map(
+      //       (cert) => {
+      //         const enrollment = cert.enrollments;
+      //         const course = enrollment?.courses;
+      //         const user = enrollment?.users;
+
+      //         return {
+      //           id: cert.id,
+      //           userId: enrollment?.student_id || "",
+      //           courseId: enrollment?.course_id || "",
+      //           courseTitle: course?.title || "Untitled Course",
+      //           userName:
+      //             [user?.first_name, user?.last_name].filter(Boolean).join(" ") ||
+      //             "Unknown",
+      //           issueDate: cert.issued_at,
+      //           verificationCode: cert.certificate_url?.split("/").pop() || cert.id, // or however your verificationCode is generated
+      //         };
+      //       }
+      //     );
+
+      //     setIssuedCertificatesData(enrichedCertificates);
+
+      // setIssuedCertificatesData(certData || []);
+
+      // 4. Update localStorage
+      updateLocalStorage();
+    } catch (error) {
+      console.error("Error in fetchEnrollments:", error);
+    }
+  };
 
   const getCourseProgress = (courseId: string): number => {
     const course = allCoursesData.find((c) => c.id === courseId);
@@ -458,6 +643,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     logout,
     enrollCourse,
     unenrollCourse,
+    enrollCourseBySlug,
     isEnrolled,
     enrolledCourses,
     completeLesson,

@@ -24,7 +24,6 @@ function ProfilePageContent() {
 
   useEffect(() => {
     if (user) {
-      console.log("User data loaded:", user);
       setUserName(user.name || "");
       setUserEmail(user.email || "");
     }
