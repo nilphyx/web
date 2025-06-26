@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image";
 import { EyeOff, Eye } from "lucide-react"
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/lib/hooks/useAuth"
 
 // Form validation schema
 const registerSchema = z.object({
@@ -30,17 +31,116 @@ const registerSchema = z.object({
     errorMap: () => ({ message: "You must accept the terms and conditions" }),
   }),
 })
+{/*
+export default function Signup() {
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [email, setEmail] = useState("")
+  const [phome, setPhone] = useState("")
+  const [password, setPassword] = useState("")
+  const [country, setCountry] = useState("")
+  const [acceptTerms, setAcceptTerms] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const { signUp } = useAuth()
 
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match")
+      return
+    }
+
+    setLoading(true)
+
+    try{
+      await signUp(email, password, firstName, lastName, phone)
+    } catch (error: any) {
+      setError(error.message || "Failed to create account")
+    } finally {
+      setLoading(false)
+    }
+  }
+}
+*/}
 type RegisterFormValues = z.infer<typeof registerSchema>
+
+// Add country data with flags and phone codes
+const countryData = {
+  dz: { name: "Algeria", phoneCode: "+213", flag: "🇩🇿" },
+  ao: { name: "Angola", phoneCode: "+244", flag: "🇦🇴" },
+  bj: { name: "Benin", phoneCode: "+229", flag: "🇧🇯" },
+  bw: { name: "Botswana", phoneCode: "+267", flag: "🇧🇼" },
+  bf: { name: "Burkina Faso", phoneCode: "+226", flag: "🇧🇫" },
+  bi: { name: "Burundi", phoneCode: "+257", flag: "🇧🇮" },
+  cv: { name: "Cabo Verde", phoneCode: "+238", flag: "🇨🇻" },
+  cm: { name: "Cameroon", phoneCode: "+237", flag: "🇨🇲" },
+  cf: { name: "Central African Republic", phoneCode: "+236", flag: "🇨🇫" },
+  td: { name: "Chad", phoneCode: "+235", flag: "🇹🇩" },
+  km: { name: "Comoros", phoneCode: "+269", flag: "🇰🇲" },
+  cd: { name: "Congo (DRC)", phoneCode: "+243", flag: "🇨🇩" },
+  cg: { name: "Congo (Republic)", phoneCode: "+242", flag: "🇨🇬" },
+  ci: { name: "Côte d'Ivoire", phoneCode: "+225", flag: "🇨🇮" },
+  dj: { name: "Djibouti", phoneCode: "+253", flag: "🇩🇯" },
+  eg: { name: "Egypt", phoneCode: "+20", flag: "🇪🇬" },
+  gq: { name: "Equatorial Guinea", phoneCode: "+240", flag: "🇬🇶" },
+  er: { name: "Eritrea", phoneCode: "+291", flag: "🇪🇷" },
+  sz: { name: "Eswatini", phoneCode: "+268", flag: "🇸🇿" },
+  et: { name: "Ethiopia", phoneCode: "+251", flag: "🇪🇹" },
+  ga: { name: "Gabon", phoneCode: "+241", flag: "🇬🇦" },
+  gm: { name: "Gambia", phoneCode: "+220", flag: "🇬🇲" },
+  gh: { name: "Ghana", phoneCode: "+233", flag: "🇬🇭" },
+  gn: { name: "Guinea", phoneCode: "+224", flag: "🇬🇳" },
+  gw: { name: "Guinea-Bissau", phoneCode: "+245", flag: "🇬🇼" },
+  ke: { name: "Kenya", phoneCode: "+254", flag: "🇰🇪" },
+  ls: { name: "Lesotho", phoneCode: "+266", flag: "🇱🇸" },
+  lr: { name: "Liberia", phoneCode: "+231", flag: "🇱🇷" },
+  ly: { name: "Libya", phoneCode: "+218", flag: "🇱🇾" },
+  mg: { name: "Madagascar", phoneCode: "+261", flag: "🇲🇬" },
+  mw: { name: "Malawi", phoneCode: "+265", flag: "🇲🇼" },
+  ml: { name: "Mali", phoneCode: "+223", flag: "🇲🇱" },
+  mr: { name: "Mauritania", phoneCode: "+222", flag: "🇲🇷" },
+  mu: { name: "Mauritius", phoneCode: "+230", flag: "🇲🇺" },
+  yt: { name: "Mayotte", phoneCode: "+262", flag: "🇾🇹" },
+  ma: { name: "Morocco", phoneCode: "+212", flag: "🇲🇦" },
+  mz: { name: "Mozambique", phoneCode: "+258", flag: "🇲🇿" },
+  na: { name: "Namibia", phoneCode: "+264", flag: "🇳🇦" },
+  ne: { name: "Niger", phoneCode: "+227", flag: "🇳🇪" },
+  ng: { name: "Nigeria", phoneCode: "+234", flag: "🇳🇬" },
+  re: { name: "Réunion", phoneCode: "+262", flag: "🇷🇪" },
+  rw: { name: "Rwanda", phoneCode: "+250", flag: "🇷🇼" },
+  st: { name: "Sao Tome and Principe", phoneCode: "+239", flag: "🇸🇹" },
+  sn: { name: "Senegal", phoneCode: "+221", flag: "🇸🇳" },
+  sc: { name: "Seychelles", phoneCode: "+248", flag: "🇸🇨" },
+  sl: { name: "Sierra Leone", phoneCode: "+232", flag: "🇸🇱" },
+  so: { name: "Somalia", phoneCode: "+252", flag: "🇸🇴" },
+  za: { name: "South Africa", phoneCode: "+27", flag: "🇿🇦" },
+  ss: { name: "South Sudan", phoneCode: "+211", flag: "🇸🇸" },
+  sd: { name: "Sudan", phoneCode: "+249", flag: "🇸🇩" },
+  tz: { name: "Tanzania", phoneCode: "+255", flag: "🇹🇿" },
+  tg: { name: "Togo", phoneCode: "+228", flag: "🇹🇬" },
+  tn: { name: "Tunisia", phoneCode: "+216", flag: "🇹🇳" },
+  ug: { name: "Uganda", phoneCode: "+256", flag: "🇺🇬" },
+  eh: { name: "Western Sahara", phoneCode: "+212", flag: "🇪🇭" },
+  zm: { name: "Zambia", phoneCode: "+260", flag: "🇿🇲" },
+  zw: { name: "Zimbabwe", phoneCode: "+263", flag: "🇿🇼" },
+};
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [selectedCountry, setSelectedCountry] = useState<string>("ng") // Default to Nigeria
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false)
+  const countryDropdownRef = useRef<HTMLDivElement>(null)
   const { toast } = useToast()
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -49,12 +149,52 @@ export default function RegisterPage() {
       lastName: "",
       email: "",
       password: "",
-      country: "",
+      country: "ng", // Default to Nigeria
       phone: "",
       terms: true,
     },
   })
+  
+  // Watch for country changes
+  const watchCountry = watch("country");
+  
+  // Update selected country when form value changes
+  useEffect(() => {
+    if (watchCountry) {
+      setSelectedCountry(watchCountry);
+    }
+  }, [watchCountry])
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target as Node)) {
+        setShowCountryDropdown(false);
+      }
+    }
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  
+  // Handle country selection from dropdown
+  const handleCountrySelect = (countryCode: string) => {
+    setSelectedCountry(countryCode);
+    setShowCountryDropdown(false);
+    
+    // Update the form value
+    const event = {
+      target: {
+        name: "country",
+        value: countryCode,
+      },
+    } as React.ChangeEvent<HTMLSelectElement>;
+    
+    register("country").onChange(event);
+  };
+  
   const onSubmit = async (data: RegisterFormValues) => {
     setIsSubmitting(true)
 
@@ -88,8 +228,7 @@ export default function RegisterPage() {
       <div
         className="relative hidden bg-leximpact-blue text-white md:block md:w-5/12 lg:w-1/2"
         style={{
-          backgroundImage:
-            "url('/signup.jpg')",
+          backgroundImage: "url('/signup.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -97,29 +236,16 @@ export default function RegisterPage() {
         <div className="absolute inset-0 bg-leximpact-blue bg-opacity-30" />
         <div className="absolute left-4 top-4 z-10 sm:left-6 sm:top-6 md:left-8 md:top-8">
           <div className="flex items-center gap-2">
-             <Image
-                     src="/white-favicon.png"
-                     alt="Logo"
-                     width={237}
-                     height={80}
-                     
-                   />
-            <span className="text-xl font-bold sm:text-2xl">Leximpact</span>
+        <Image
+          src="/white-logo.png"
+          alt="Nilphyx logo"
+          width={237}
+          height={80}
+          priority // Ensures the image loads as soon as possible
+          placeholder="blur"
+          blurDataURL="/white-logo.png" // Optionally use a small base64 or low-res image for blur-up
+        />
           </div>
-        </div>
-      </div>
-
-      {/* Mobile logo - visible on mobile, hidden on md and up */}
-      <div className="flex items-center justify-start bg-leximpact-blue p-4 md:hidden">
-        <div className="flex items-center gap-2 text-white">
-          <Image
-                     src="/white-logo.png"
-                     alt="Logo"
-                     width={237}
-                     height={80}
-                     
-                   />
-          <span className="text-xl font-bold">Leximpact</span>
         </div>
       </div>
 
@@ -128,7 +254,7 @@ export default function RegisterPage() {
         <div className="mx-auto w-full max-w-md md:my-auto">
           <div className="text-center mb-6 sm:mb-8">
             <h1 className="text-2xl font-bold sm:text-3xl">
-              Register <span className="text-leximpact-navy">Now</span>
+              Create Nilphyx Account
             </h1>
             <p className="mt-2 text-sm text-gray-600 sm:text-base">
               Have an account?{" "}
@@ -226,11 +352,11 @@ export default function RegisterPage() {
                 <option value="" disabled>
                   Select your country
                 </option>
-                <option value="us">United States</option>
-                <option value="ca">Canada</option>
-                <option value="uk">United Kingdom</option>
-                <option value="ng">Nigeria</option>
-                <option value="other">Other</option>
+                {Object.entries(countryData).map(([code, data]) => (
+                  <option key={code} value={code}>
+                    {data.flag} {data.name}
+                  </option>
+                ))}
               </select>
               {errors.country && <p className="mt-1 text-xs text-red-500">{errors.country.message}</p>}
             </div>
@@ -240,19 +366,46 @@ export default function RegisterPage() {
                 Mobile Number
               </label>
               <div className="flex gap-2">
-                <div className="flex h-10 w-[100px] items-center justify-between rounded-full border border-gray-300 bg-white px-2 py-2 sm:h-12 sm:w-[120px] sm:px-3">
-                  <div className="flex items-center gap-1 sm:gap-2">
-                    <div className="h-5 w-5 overflow-hidden rounded sm:h-6 sm:w-6">
-                      <div className="flex h-full flex-col">
-                        <div className="h-1/3 bg-green-600"></div>
-                        <div className="h-1/3 bg-white"></div>
-                        <div className="h-1/3 bg-green-600"></div>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+                    className="flex h-10 w-[100px] items-center justify-between rounded-full border border-gray-300 bg-white px-2 py-2 sm:h-12 sm:w-[120px] sm:px-3"
+                  >
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <div className="flex h-5 w-5 items-center justify-center overflow-hidden rounded sm:h-6 sm:w-6">
+                        <span className="text-base sm:text-lg">
+                          {selectedCountry && countryData[selectedCountry as keyof typeof countryData]?.flag}
+                        </span>
                       </div>
+                      <span className="text-xs sm:text-base">
+                        {selectedCountry && countryData[selectedCountry as keyof typeof countryData]?.phoneCode}
+                      </span>
                     </div>
-                    <span className="text-xs sm:text-base">+234</span>
-                  </div>
-                  <span className="text-xs sm:text-sm">▼</span>
+                    <span className="text-xs sm:text-sm">▼</span>
+                  </button>
+                  
+                  {showCountryDropdown && (
+                    <div 
+                      ref={countryDropdownRef}
+                      className="absolute left-0 top-full z-10 mt-1 max-h-60 w-64 overflow-y-auto rounded-lg border border-gray-300 bg-white shadow-lg"
+                    >
+                      {Object.entries(countryData).map(([code, data]) => (
+                        <button
+                          key={code}
+                          type="button"
+                          className="flex w-full items-center gap-2 px-3 py-2 hover:bg-gray-100"
+                          onClick={() => handleCountrySelect(code)}
+                        >
+                          <span className="text-lg">{data.flag}</span>
+                          <span className="text-sm">{data.name}</span>
+                          <span className="ml-auto text-xs text-gray-500">{data.phoneCode}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
+                
                 <Input
                   id="phone"
                   type="tel"
@@ -288,15 +441,12 @@ export default function RegisterPage() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="h-10 w-full rounded-full bg-leximpact-button py-2 text-sm font-medium hover:bg-leximpact-button-hover sm:h-12 sm:text-base md:text-lg"
+              className="h-10 w-full rounded-full bg-primary py-2 text-sm font-medium hover:bg-leximpact-button-hover sm:h-12 sm:text-base md:text-lg"
             >
               {isSubmitting ? "Registering..." : "Register"}
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-xs text-gray-500 sm:mt-8 sm:text-sm">
-            © 2025 Leximpact. All rights reserved.
-          </div>
         </div>
       </div>
     </div>

@@ -63,7 +63,7 @@ export default function SignInPage() {
     <main className="relative w-full h-screen font-montserrat overflow-hidden">
       <Image
         src="/login.png"
-        alt="Background"
+        alt="Nilphyx login Background"
         fill
         className="object-cover z-0"
         priority
