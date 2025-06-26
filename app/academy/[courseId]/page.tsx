@@ -90,16 +90,17 @@ export default function CourseDetailPage() {
 
   const handleEnroll = async () => {
     if (!user) {
-      router.push(`/login?redirect=/academy/${course.id}`);
+      router.push(`/login?redirect=/academy/${course.slug}`);
       return;
     }
-    await enrollCourseBySlug(course.id);
+    console.log("user is: ", user);
+    await enrollCourseBySlug(course.slug);
     // Optionally redirect to the learning page or show a success message
-    router.push(`/academy/learn/${course.id}`);
+    router.push(`/academy/learn/${course.slug}`);
   };
 
   const handleGoToCourse = () => {
-    router.push(`/academy/learn/${course.id}`);
+    router.push(`/academy/learn/${course.slug}`);
   };
 
   const totalLessons = course.modules.reduce(

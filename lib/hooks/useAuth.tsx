@@ -279,6 +279,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
     const alreadyEnrolled = enrolledCoursesData.includes(courseId);
     if (alreadyEnrolled) return;
+    console.log("User ID in enrollment", user.id);
 
     // Create enrollment in DB
     const { error } = await supabase.from("enrollments").insert([
@@ -310,27 +311,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     }
     await enrollCourse(course.id);
   };
-
-  // const unenrollCourse = async (courseId: string) => {
-  //   if (!user) return;
-  //   setEnrolledCoursesData((prev) => prev.filter((id) => id !== courseId));
-  //   setCourseProgressData((prev) => {
-  //     const newProgress = { ...prev };
-  //     delete newProgress[courseId];
-  //     return newProgress;
-  //   });
-  //   setQuizSubmissionsData((prev) =>
-  //     prev.filter((submission) => {
-  //       const quiz = allQuizzesData.find((q) => q.id === submission.quizId);
-  //       return !(quiz && quiz.courseId === courseId);
-  //     })
-  //   );
-  //   setIssuedCertificatesData((prev) =>
-  //     prev.filter(
-  //       (cert) => cert.courseId !== courseId || cert.userId !== user.id
-  //     )
-  //   );
-  // };
   const unenrollCourse = async (courseId: string) => {
     if (!user) return;
 
@@ -370,6 +350,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   const isEnrolled = (courseId: string) =>
     enrolledCoursesData.includes(courseId);
+
+  // const unenrollCourse = async (courseId: string) => {
+  //   if (!user) return;
+  //   setEnrolledCoursesData((prev) => prev.filter((id) => id !== courseId));
+  //   setCourseProgressData((prev) => {
+  //     const newProgress = { ...prev };
+  //     delete newProgress[courseId];
+  //     return newProgress;
+  //   });
+  //   setQuizSubmissionsData((prev) =>
+  //     prev.filter((submission) => {
+  //       const quiz = allQuizzesData.find((q) => q.id === submission.quizId);
+  //       return !(quiz && quiz.courseId === courseId);
+  //     })
+  //   );
+  //   setIssuedCertificatesData((prev) =>
+  //     prev.filter(
+  //       (cert) => cert.courseId !== courseId || cert.userId !== user.id
+  //     )
+  //   );
+  // };
 
   // const fetchEnrollments = async () => {
   //   if (!user) return;

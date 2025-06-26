@@ -33,7 +33,6 @@ export default function HomePage() {
       {/* Call to Action Section */}
       <section className="py-16 bg-background ">
         <div className="container mx-auto text-center">
-        {/* <div className="w-full text-center"> */}
           <Image
             src="https://picsum.photos/seed/cta/1200/400"
             alt="AI illustration"

@@ -641,7 +641,10 @@ function EnrolledCourseViewerPageContent() {
             <div className="aspect-video mb-6 rounded-lg overflow-hidden">
               <iframe
                 className="w-full h-full"
-                src={`https://www.youtube.com/embed/${currentLesson.videoId}`}
+                src={`https://www.youtube-nocookie.com/embed/${currentLesson.videoId}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                sandbox="allow-scripts allow-same-origin"
+                // src={`https://www.youtube.com/embed/${currentLesson.videoId}`}
                 allowFullScreen
               ></iframe>
             </div>
