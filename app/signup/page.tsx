@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image";
+import { useRouter } from "next/navigation"
 import { EyeOff, Eye } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -12,7 +13,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
-import { useAuth } from "@/lib/hooks/useAuth"
+import { createClient } from "@/utils/supabase/client"
+
+// Note: Metadata must be in a separate layout file for client components
+// This is just for documentation purposes
 
 // Form validation schema
 const registerSchema = z.object({
@@ -24,48 +28,18 @@ const registerSchema = z.object({
     .min(8, "Password must be at least 8 characters")
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
     .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-    .regex(/[0-9]/, "Password must contain at least one number"),
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
   country: z.string().min(1, "Please select a country"),
-  phone: z.string().min(6, "Please enter a valid phone number"),
+  phone: z.string().min(6, "Please enter a valid phone number")
+    .refine(val => /^\d+$/.test(val), {
+      message: "Phone number can only contain digits"
+    }),
   terms: z.literal(true, {
     errorMap: () => ({ message: "You must accept the terms and conditions" }),
   }),
 })
-{/*
-export default function Signup() {
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [email, setEmail] = useState("")
-  const [phome, setPhone] = useState("")
-  const [password, setPassword] = useState("")
-  const [country, setCountry] = useState("")
-  const [acceptTerms, setAcceptTerms] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const { signUp } = useAuth()
 
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match")
-      return
-    }
-
-    setLoading(true)
-
-    try{
-      await signUp(email, password, firstName, lastName, phone)
-    } catch (error: any) {
-      setError(error.message || "Failed to create account")
-    } finally {
-      setLoading(false)
-    }
-  }
-}
-*/}
 type RegisterFormValues = z.infer<typeof registerSchema>
 
 // Add country data with flags and phone codes
@@ -195,28 +169,84 @@ export default function RegisterPage() {
     register("country").onChange(event);
   };
   
+  // Format phone number as user types
+  const formatPhoneNumber = (value: string) => {
+    // Remove any non-digits
+    const phoneNumber = value.replace(/\D/g, "");
+    return phoneNumber;
+  };
+  
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedPhone = formatPhoneNumber(e.target.value);
+    e.target.value = formattedPhone;
+    return e;
+  };
+  
+  const router = useRouter();
+  const supabase = createClient();
+
+  const [showVerificationModal, setShowVerificationModal] = useState(false)
+  const [userEmail, setUserEmail] = useState("")
+  
   const onSubmit = async (data: RegisterFormValues) => {
     setIsSubmitting(true)
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      console.log("Form data submitted:", data)
-
-      toast({
-        title: "Registration successful!",
-        description: "Your account has been created.",
+      // Get the phone code for the selected country
+      const phoneCode = countryData[data.country as keyof typeof countryData]?.phoneCode || '';
+      const fullPhoneNumber = `${phoneCode}${data.phone}`;
+      
+      // Sign up with Supabase
+      const { data: authData, error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            first_name: data.firstName,
+            last_name: data.lastName,
+            country: data.country,
+            phone: fullPhoneNumber,
+            full_name: `${data.firstName} ${data.lastName}`,
+          },
+          emailRedirectTo: `${window.location.origin}/login`,
+        },
       })
 
-      // In a real app, you would redirect to login or dashboard
-    } catch (error) {
+      if (error) throw error;
+
+      if (authData?.user) {
+        // Store the user email for display in the verification modal
+        setUserEmail(data.email)
+        
+        // Show verification modal
+        setShowVerificationModal(true)
+        
+        toast({
+          title: "Registration successful!",
+          description: "Please check your email to verify your account.",
+        })
+      }
+    } catch (error: any) {
+      let errorMessage = "There was a problem with your registration.";
+      
+      // Handle specific Supabase error messages
+      if (error.message) {
+        if (error.message.includes("already registered")) {
+          errorMessage = "This email is already registered. Please log in instead.";
+        } else if (error.message.includes("password")) {
+          errorMessage = "Your password doesn't meet the security requirements.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
         title: "Registration failed",
-        description: "There was a problem with your registration.",
+        description: errorMessage,
         type: "destructive",
-      })
-      console.error("Registration error:", error)
+      });
+      
+      console.error("Registration error:", error);
     } finally {
       setIsSubmitting(false)
     }
@@ -228,7 +258,7 @@ export default function RegisterPage() {
       <div
         className="relative hidden bg-leximpact-blue text-white md:block md:w-5/12 lg:w-1/2"
         style={{
-          backgroundImage: "url('/signup.jpg')",
+          backgroundImage: "url('/sign-up-page.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -236,16 +266,20 @@ export default function RegisterPage() {
         <div className="absolute inset-0 bg-leximpact-blue bg-opacity-30" />
         <div className="absolute left-4 top-4 z-10 sm:left-6 sm:top-6 md:left-8 md:top-8">
           <div className="flex items-center gap-2">
-        <Image
-          src="/white-logo.png"
-          alt="Nilphyx logo"
-          width={237}
-          height={80}
-          priority // Ensures the image loads as soon as possible
-          placeholder="blur"
-          blurDataURL="/white-logo.png" // Optionally use a small base64 or low-res image for blur-up
-        />
+            <Image
+              src="/white-logo.png"
+              alt="Nilphyx logo"
+              width={237}
+              height={80}
+              priority // Ensures the image loads as soon as possible
+              placeholder="blur"
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+            />
           </div>
+        </div>
+        <div className="absolute bottom-8 left-0 right-0 text-center z-10">
+          <h2 className="text-white text-3xl font-bold drop-shadow-lg">Join Our Community</h2>
+          <p className="text-white text-lg mt-2 drop-shadow-md">Create an account to get started</p>
         </div>
       </div>
 
@@ -336,6 +370,16 @@ export default function RegisterPage() {
                 </button>
               </div>
               {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
+              <div className="mt-2 text-xs text-gray-500">
+                Password must contain:
+                <ul className="mt-1 list-inside list-disc">
+                  <li>At least 8 characters</li>
+                  <li>One uppercase letter</li>
+                  <li>One lowercase letter</li>
+                  <li>One number</li>
+                  <li>One special character</li>
+                </ul>
+              </div>
             </div>
 
             <div>
@@ -413,7 +457,9 @@ export default function RegisterPage() {
                   className={`h-10 flex-1 rounded-full border bg-white px-4 py-2 text-sm focus-visible:ring-leximpact-navy sm:h-12 sm:text-base ${
                     errors.phone ? "border-red-500" : "border-gray-300 text-gray-400"
                   }`}
-                  {...register("phone")}
+                  {...register("phone", {
+                    onChange: (e) => handlePhoneChange(e)
+                  })}
                 />
               </div>
               {errors.phone && <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>}
@@ -443,12 +489,84 @@ export default function RegisterPage() {
               disabled={isSubmitting}
               className="h-10 w-full rounded-full bg-primary py-2 text-sm font-medium hover:bg-leximpact-button-hover sm:h-12 sm:text-base md:text-lg"
             >
-              {isSubmitting ? "Registering..." : "Register"}
+              {isSubmitting ? (
+                <div className="flex items-center justify-center">
+                  <svg className="h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span className="ml-2">Registering...</span>
+                </div>
+              ) : (
+                "Register"
+              )}
             </Button>
           </form>
 
         </div>
       </div>
+      
+      {/* Email Verification Modal */}
+      {showVerificationModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="relative rounded-lg bg-white p-6 shadow-xl sm:p-8 md:max-w-md md:p-10">
+            <div className="mb-6 text-center">
+              <div className="mb-4 flex justify-center">
+                <div className="h-16 w-16 rounded-full bg-green-100 p-2 text-center">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-12 w-12 text-green-600" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" 
+                    />
+                  </svg>
+                </div>
+              </div>
+              <h3 className="text-lg font-bold sm:text-xl">Verify Your Email Address</h3>
+              <p className="mt-2 text-sm text-gray-600">
+                We've sent a verification email to:
+              </p>
+              <p className="mt-1 font-medium text-leximpact-navy">
+                {userEmail}
+              </p>
+              <p className="mt-4 text-sm text-gray-600">
+                Please check your inbox and click on the verification link to complete your registration.
+              </p>
+              
+              <div className="mt-6 text-left rounded-md bg-amber-50 p-4 text-sm">
+                <p className="font-medium text-amber-800">Can't find the email?</p>
+                <ul className="mt-2 list-inside list-disc text-amber-700">
+                  <li>Check your spam or junk folder</li>
+                  <li>Make sure you entered the correct email address</li>
+                  <li>Allow a few minutes for the email to arrive</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                className="w-full rounded-full bg-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-300 sm:w-1/2"
+                onClick={() => setShowVerificationModal(false)}
+              >
+                Close
+              </button>
+              <button
+                className="w-full rounded-full bg-primary py-2.5 text-sm font-medium text-white hover:bg-leximpact-button-hover sm:w-1/2"
+                onClick={() => router.push('/login')}
+              >
+                Go to Login
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
