@@ -53,7 +53,7 @@ interface AccordionItemProps {
 
 const AccordionItem: React.FC<AccordionItemProps> = ({ faq, isOpen, toggleOpen }) => {
   return (
-    <div className="border-b border-neutral-200 last:border-b-0">
+    <div className="bg-background border-b border-neutral-200 last:border-b-0">
       <h2>
         <button
           type="button"

@@ -11,8 +11,8 @@ export default function PlatformSection() {
           Our Platform
         </h2>
         <p className="text-muted-foreground text-lg mt-2">
-          Three powerful solutions working together to drive innovation and
-          growth
+          Three base powerful solutions working together to drive innovation and
+          growth. <br></br>MORE COMING SOON  . . .
         </p>
       </div>
       <div className="flex flex-wrap md:flex-nowrap justify-center gap-6  bg-heroMild px-10 py-14">

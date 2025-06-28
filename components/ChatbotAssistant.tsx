@@ -19,18 +19,6 @@ const ChatbotAssistant: React.FC = () => {
   const [apiKey, setApiKey] = useState<string | null>(null);
 
   useEffect(() => {
-    // In a real app, process.env.API_KEY would be set during build time or on the server.
-    // For client-side components needing it, you might pass it as a prop from a server component,
-    // or fetch it from an API route if it must be kept from client bundle.
-    // For this demo, we'll assume it's available somehow, or prompt if not.
-    // THIS IS NOT SECURE FOR PRODUCTION IF API_KEY IS DIRECTLY IN CLIENT CODE.
-    // The prompt strictly says: "The API key must be obtained exclusively from the environment variable process.env.API_KEY".
-    // And "Use this process.env.API_KEY string directly when initializing the @google/genai client instance".
-    // However, process.env.API_KEY is typically not available in client-side Next.js components by default.
-    // A common pattern is to expose it via next.config.js `env` or use an API route.
-    // For simplicity in this demo, if it's not found, we'll show an error.
-    // A better approach: create an API route `/api/chat` that handles the GenAI call.
-    
     const key = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.API_KEY; // Fallback, NEXT_PUBLIC_ is for client exposure
     if (key) {
       setApiKey(key);
@@ -39,14 +27,14 @@ const ChatbotAssistant: React.FC = () => {
         const newChat = ai.chats.create({
           model: 'gemini-2.0-flash-lite', 
            config: {
-            systemInstruction: "You are a helpful AI assistant for a learning platform, LexImpact Africa (Pronounced as -Let's impact Africa-). Be concise and friendly. If asked about current events or specific real-time data, mention that you can try to find information using Google Search if appropriate for the query, but results might not always be up-to-date.",
+            systemInstruction: "You are a helpful AI assistant for a learning platform, Nilphyx Africa. Be concise and friendly. If asked about current events or specific real-time data, mention that you can try to find information using Google Search if appropriate for the query, but results might not always be up-to-date.",
             // thinkingConfig: { thinkingBudget: 0 } // Example: disable thinking for lower latency
           },
         });
         setChat(newChat);
         setMessages([{ id: 'system-init', role: 'system', text: 'Hello! How can I help you today?', timestamp: Date.now() }]);
       } catch (e: any) {
-        console.error("Failed to initialize LexImpact chat:", e);
+        console.error("Failed to initialize Nilphyx chat:", e);
         setError(`Failed to initialize AI: ${e.message}. Ensure API key is configured.`);
         setMessages([{ id: 'error-init', role: 'error', text: `Error: ${e.message}`, timestamp: Date.now() }]);
       }
@@ -77,7 +65,7 @@ const ChatbotAssistant: React.FC = () => {
 
     try {
       // Check if the query might benefit from search grounding
-      const requiresSearch = /who won|latest news|current price|olympics 2024|recent events/i.test(userInput.text);
+      const requiresSearch = /who won|latest news|current price|recent events/i.test(userInput.text);
       
       const stream = await chat.sendMessageStream({
         message: userInput.text,
@@ -162,8 +150,8 @@ const ChatbotAssistant: React.FC = () => {
           {/* Header */}
           <div className="bg-primary text-white p-3 flex justify-between items-center rounded-t-lg">
             <div className="flex items-center">
-              <img src="/favicon.png" alt="LexImpact Logo" className="w-6 h-6 mr-2" />
-              <h3 className="font-semibold text-lg">LexImpact Bot</h3>
+              <img src="/logo.png" alt="Nylphics Logo" className="w-6 h-6 mr-2" />
+              <h3 className="font-semibold text-lg">Nilphyx Bot</h3>
             </div>
             <div>
               <button onClick={toggleMinimize} className="text-white hover:bg-primary-dark/50 p-1 rounded-full mr-1" aria-label="Minimize chat">

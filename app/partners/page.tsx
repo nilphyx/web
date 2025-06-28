@@ -13,7 +13,7 @@ export const metadata = {
 const mockPartners: Partner[] = [
   {
     id: 'p1',
-    name: 'Tech University',
+    name: 'Would you be the first univesity?',
     logoUrl: 'https://picsum.photos/seed/techu/200/100?grayscale', // Grayscale for a more uniform look
     websiteUrl: '#',
     type: 'Academic',
@@ -21,7 +21,7 @@ const mockPartners: Partner[] = [
   },
   {
     id: 'p2',
-    name: 'Innovate Corp',
+    name: 'Nyphix First company partner? ',
     logoUrl: 'https://picsum.photos/seed/innovatecorp/200/100?grayscale',
     websiteUrl: '#',
     type: 'Industry',
@@ -29,27 +29,11 @@ const mockPartners: Partner[] = [
   },
   {
     id: 'p3',
-    name: 'AI Community Hub',
+    name: 'We Support diverse communities. ',
     logoUrl: 'https://picsum.photos/seed/aicommunity/200/100?grayscale',
     websiteUrl: '#',
     type: 'Community',
     description: 'A global network of AI enthusiasts and practitioners, co-hosting workshops, hackathons, and knowledge-sharing events.'
-  },
-  {
-    id: 'p4',
-    name: 'Data Insights Inc.',
-    logoUrl: 'https://picsum.photos/seed/datainsights/200/100?grayscale',
-    websiteUrl: '#',
-    type: 'Industry',
-    description: 'Specialists in data analytics and big data solutions, contributing specialized datasets and tools to our platform.'
-  },
-   {
-    id: 'p5',
-    name: 'Open Research Foundation',
-    logoUrl: 'https://picsum.photos/seed/openresearch/200/100?grayscale',
-    websiteUrl: '#',
-    type: 'Academic',
-    description: 'Dedicated to promoting open science and reproducible research in AI, supporting our ethical AI initiatives.'
   },
 ];
 

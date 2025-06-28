@@ -14,7 +14,6 @@ export default function Footer() {
   const communityLinks = [
     { label: "Discord", href: "#" },
     { label: "Slack", href: "#" },
-    { label: "Github", href: "#" },
   ];
 
   const serviceLinks = [
@@ -84,7 +83,7 @@ export default function Footer() {
           <h4 className="font-semibold mb-4">Contact Us</h4>
           <ul className="space-y-2 text-sm">
             <li className="flex items-center gap-2">
-              <Mail className="w-4 h-4" /> contact@nyphics.com
+              <Mail className="w-4 h-4" /> contact@nilphyx.tech
             </li>
             <li className="flex items-center gap-2">
               <MapPin className="w-4 h-4" /> Nigeria
@@ -93,28 +92,28 @@ export default function Footer() {
 
           <div className="flex gap-4 mt-6">
             <a
-              href="https://instagram.com/lexrunit/"
+              href="https://instagram.com/nilphyx/"
               target="_blank"
               rel="noopener noreferrer"
             >
               <Instagram className="w-5 h-5 hover:text-gray-300" />
             </a>
             <a
-              href="https://linkedin.com/showcase/leximpactafrica"
+              href="https://linkedin.com/company/nilphyx"
               target="_blank"
               rel="noopener noreferrer"
             >
               <Linkedin className="w-5 h-5 hover:text-gray-300" />
             </a>
             <a
-              href="https://youtube.com/@leximpact"
+              href="https://youtube.com/@nilphyx"
               target="_blank"
               rel="noopener noreferrer"
             >
               <Youtube className="w-5 h-5 hover:text-gray-300" />
             </a>
             <a
-              href="https://x.com/lexrunit"
+              href="https://x.com/nilphyx"
               target="_blank"
               rel="noopener noreferrer"
             >
