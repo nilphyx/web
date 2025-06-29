@@ -8,7 +8,7 @@ const testimonials = [
     role: "Tech Lead, Innovation Hub",
   },
   {
-    text: "Ever since I became a member of Leximpact, it has been up-scaling all the way. I never knew that learning can be this fun.",
+    text: "Ever since I became a member of Nilphyx Academy, it has been up-scaling all the way. I never knew that learning can be this fun.",
     name: "Zola Nandi",
     role: "Student, University of South Africa",
   },
@@ -31,7 +31,8 @@ export default function CommunityVoicesSection() {
           Community Voices
         </h2>
         <p className="text-[24px] font-normal font-montserrat text-[#6B7280] mt-2">
-          Hear from our growing community of developers and organizations
+          Hear from our growing community of developers and organizations<br></br>
+          This reviews would be updated soon. 
         </p>
       </div>
       <div className="flex flex-wrap justify-center gap-6">

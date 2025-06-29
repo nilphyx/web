@@ -1,7 +1,40 @@
 import React from 'react';
 
 export const UserGroupIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-3.741-5.601M21.727 20.095a9.135 9.135 0 01-5.913-.405m5.913.405a2.25 2.25 0 001.981-2.121V12.856a2.25 2.25 0 00-1.318-2.096M18 18.72A9.094 9.094 0 0014.259 18.25m3.741.479a3 3 0 00.005-5.667M21.727 20.095a9.135 9.135 0 01-1.918-.405M18 18.72A9.094 9.094 0 0014.259 18.25M18 18.72c0-1.995-.486-3.852-1.318-5.485M14.259 18.25a9.094 9.094 0 01-8.741-.479m8.741.479a2.986 2.986 0 003.741-5.601M14.259 18.25c-1.995 0-3.852.486-5.485 1.318M3.949 12.856c0 1.091.419 2.08 1.139 2.832M6.995 19.905a9.135 9.135 0 01-1.918-.405M15.75 8.25a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM3 16.065a9.135 9.135 0 012.043-.848M3 16.065c0-1.091.419-2.08 1.139-2.832" />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="user-group-icon"
+    {...props}
+  >
+    <circle cx="7" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+    <circle cx="17" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+    <circle cx="12" cy="7" r="3" stroke="currentColor" strokeWidth="1.5" />
+    <path
+      d="M3.5 18c0-2.5 3-4 5.5-4s5.5 1.5 5.5 4"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+    <path
+      d="M13 18c0-1.5 2-2.5 4-2.5s4 1 4 2.5"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
   </svg>
 );
+
+// Add this to your global CSS or module CSS
+/*
+.user-group-icon {
+  animation: float 2.5s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+*/

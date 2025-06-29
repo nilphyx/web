@@ -261,6 +261,7 @@ export default function RegisterPage() {
           backgroundImage: "url('/sign-up-page.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
+          
         }}
       >
         <div className="absolute inset-0 bg-leximpact-blue bg-opacity-30" />
