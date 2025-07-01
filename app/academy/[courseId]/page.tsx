@@ -29,6 +29,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Spinner from "@/components/Spinner";
 import { Card } from "@/components/Card"; // Added Card import
+import { getCourses } from "@/lib/actions/getCourses";
 
 // This component can be a server component if we pass course data as props
 // But to use useAuth for enroll/unenroll, parts of it or the whole page might need to be client
@@ -43,6 +44,21 @@ import { Card } from "@/components/Card"; // Added Card import
 //   };
 // }
 
+// import CourseDetailPageClient from "./CourseDetailPageClient";
+
+// export default async function CourseDetailPage({ params }) {
+//   const courses = await getCourses();
+//   const course = courses.find((c) => c.id === params.courseId);
+
+//   if (!course) {
+//     <div className="flex justify-center items-center min-h-screen">
+//       <Spinner size="lg" />
+//     </div>;
+//   }
+
+//   return <CourseDetailPageClient course={course} />;
+// }
+
 export default function CourseDetailPage() {
   const params = useParams();
   const courseId = params.courseId as string;
@@ -50,10 +66,19 @@ export default function CourseDetailPage() {
   const [expandedModules, setExpandedModules] = useState<
     Record<string, boolean>
   >({});
+  // const courses = await getCourses();
+
+  useEffect(() => {
+    async function fetchCourse() {
+      const courses = await getCourses();
+      const foundCourse = courses.find((c) => c.id === params.courseId);
+      setCourse(foundCourse || null);
+    }
+    fetchCourse();
+  }, [params.courseId]);
 
   const {
     user,
-    // enrollCourse,
     enrollCourseBySlug,
     unenrollCourse,
     isEnrolled,
@@ -63,18 +88,24 @@ export default function CourseDetailPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const foundCourse = allCoursesData.find((c) => c.id === courseId);
-    if (foundCourse) {
-      setCourse(foundCourse);
-      // Expand first module by default
-      if (foundCourse.modules.length > 0) {
-        setExpandedModules({ [foundCourse.modules[0].id]: true });
+    async function fetchCourse() {
+      const courses = await getCourses();
+      const foundCourse = courses.find((c) => c.id === params.courseId);
+      setCourse(foundCourse || null);
+      if (foundCourse) {
+        setCourse(foundCourse);
+        // Expand first module by default
+        if (foundCourse.modules.length > 0) {
+          setExpandedModules({ [foundCourse.modules[0].id]: true });
+        }
+      } else {
+        // Handle course not found, e.g., redirect or show 404 content
+        router.push("/academy?error=notfound");
       }
-    } else {
-      // Handle course not found, e.g., redirect or show 404 content
-      router.push("/academy?error=notfound");
     }
-  }, [courseId, router]);
+    fetchCourse();
+    // const foundCourse = courses.find((c) => c.id === courseId);
+  }, [courseId, router, params.courseId]);
 
   if (!course || authLoading) {
     return (
@@ -93,7 +124,7 @@ export default function CourseDetailPage() {
       router.push(`/login?redirect=/academy/${course.slug}`);
       return;
     }
-    console.log("user is: ", user);
+
     await enrollCourseBySlug(course.slug);
     // Optionally redirect to the learning page or show a success message
     router.push(`/academy/learn/${course.slug}`);

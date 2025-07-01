@@ -20,11 +20,12 @@ import {
   UserQuizSubmission,
 } from "@/lib/types";
 import {
-  courses as allCoursesData,
+  // courses as courses,
   quizzes as allQuizzesData,
 } from "@/lib/data/courses";
 import { mockIssuedCertificates } from "@/lib/data/issuedCertificates";
 import { createClient } from "@/utils/supabase/client";
+import { getCourses } from "../actions/getCourses";
 
 // Exporting AuthState enum
 export enum AuthState {
@@ -82,6 +83,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     Certificate[]
   >(mockIssuedCertificates);
   const [isLoading, setIsLoading] = useState(true);
+  const [courses, setCourses] = useState<Course[]>([]);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -200,6 +202,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     updateLocalStorage();
   }, [updateLocalStorage]);
 
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        setIsLoading(true);
+        const courses = await getCourses();
+        setCourses(courses);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
   const login = async (email: string, password: string) => {
     setIsLoading(true);
 
@@ -279,8 +297,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
     const alreadyEnrolled = enrolledCoursesData.includes(courseId);
     if (alreadyEnrolled) return;
-    console.log("User ID in enrollment", user.id);
-
     // Create enrollment in DB
     const { error } = await supabase.from("enrollments").insert([
       {
@@ -304,7 +320,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const enrollCourseBySlug = async (slug: string) => {
-    const course = allCoursesData.find((c) => c.slug === slug);
+    const course = courses.find((c) => c.slug === slug);
     if (!course) {
       console.error("Course not found for slug:", slug);
       return;
@@ -482,7 +498,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const getCourseProgress = (courseId: string): number => {
-    const course = allCoursesData.find((c) => c.id === courseId);
+    const course = courses.find((c) => c.id === courseId);
     if (!course) return 0;
     const progress = courseProgressData[courseId];
     if (!progress || !progress.completedLessons) return 0;
@@ -506,7 +522,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   const enrolledCourses: EnrolledCourse[] = enrolledCoursesData
     .map((id) => {
-      const course = allCoursesData.find((c) => c.id === id);
+      const course = courses.find((c) => c.id === id);
       if (!course) return null;
       return {
         ...course,
@@ -608,7 +624,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     );
     if (existingCertificate) return existingCertificate;
 
-    const course = allCoursesData.find((c) => c.id === courseId);
+    const course = courses.find((c) => c.id === courseId);
     if (!course) return null;
 
     const newCertificate: Certificate = {

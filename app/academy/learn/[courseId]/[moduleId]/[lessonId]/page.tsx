@@ -338,12 +338,12 @@
 //           {currentLesson.type === "video" && currentLesson.videoId && (
 //             <div className="aspect-video mb-6 rounded-lg overflow-hidden shadow-lg">
 //               <iframe
-//                 className="w-full h-full"
-//                 src={`https://www.youtube.com/embed/${currentLesson.videoId}`}
-//                 title={currentLesson.title}
-//                 frameBorder="0"
-//                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-//                 allowFullScreen
+// className="w-full h-full"
+// src={`https://www.youtube.com/embed/${currentLesson.videoId}`}
+// title={currentLesson.title}
+// frameBorder="0"
+// allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+// allowFullScreen
 //               ></iframe>
 //             </div>
 //           )}
@@ -473,6 +473,7 @@ import {
   AwardIcon,
 } from "@/components/icons";
 import SidebarNavigation from "@/components/SidebarNavigation";
+import { getCourses } from "@/lib/actions/getCourses";
 
 function flattenLessons(course: Course) {
   const flat: {
@@ -494,10 +495,11 @@ function flattenLessons(course: Course) {
   return flat;
 }
 
-function EnrolledCourseViewerPageContent() {
+async function EnrolledCourseViewerPageContent() {
   const { courseId, moduleId, lessonId } = useParams();
   const router = useRouter();
   const pathname = usePathname();
+  const courses = await getCourses();
 
   const {
     user,
@@ -517,7 +519,7 @@ function EnrolledCourseViewerPageContent() {
     useState<ReturnType<typeof getCertificate>>(null);
 
   useEffect(() => {
-    const course = allCoursesData.find((c) => c.id === courseId);
+    const course = courses.find((c) => c.id === courseId);
     if (!course)
       return router.replace("/academy/my-courses?error=course_not_found");
 
@@ -642,9 +644,10 @@ function EnrolledCourseViewerPageContent() {
               <iframe
                 className="w-full h-full"
                 src={`https://www.youtube-nocookie.com/embed/${currentLesson.videoId}`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                 sandbox="allow-scripts allow-same-origin"
-                // src={`https://www.youtube.com/embed/${currentLesson.videoId}`}
+                title={currentLesson.title}
+                frameBorder="0"
+                allow="allow-scripts allow-same-origin accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               ></iframe>
             </div>

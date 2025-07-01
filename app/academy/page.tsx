@@ -1,19 +1,26 @@
-import Link from 'next/link';
-import { courses as allCoursesData } from '@/lib/data/courses';
-import { Course } from '@/lib/types';
-import { Card } from '@/components/Card';
-import { Button } from '@/components/Button';
-import { BookOpenIcon, TagIcon, AcademicCapIcon, StarIcon } from '@/components/icons';
-import Image from 'next/image';
+import Link from "next/link";
+import { Course } from "@/lib/types";
+import { Card } from "@/components/Card";
+import { Button } from "@/components/Button";
+import {
+  BookOpenIcon,
+  TagIcon,
+  AcademicCapIcon,
+  StarIcon,
+} from "@/components/icons";
+import Image from "next/image";
+import { getCourses } from "@/lib/actions/getCourses";
+import { ViewCourseButton } from "@/components/ViewCourseButton";
 
 export const metadata = {
-  title: 'AI Academy - All Courses',
-  description: 'Explore a wide range of courses in Artificial Intelligence, Machine Learning, and more.',
+  title: "AI Academy - All Courses",
+  description:
+    "Explore a wide range of courses in Artificial Intelligence, Machine Learning, and more.",
 };
 
 export default async function CourseListPage() {
   // In a real app, fetch courses from an API
-  const courses: Course[] = allCoursesData;
+  const courses = await getCourses();
 
   return (
     <div className="container mx-auto py-8 px-4 animate-fadeIn">
@@ -84,11 +91,9 @@ export default async function CourseListPage() {
                 </div>
 
                 <div className="mt-auto">
-                  <Button variant="primary" fullWidth asChild>
-                    <Link href={`/academy/${course.id}`} prefetch={true}>
-                      View Details
-                    </Link>
-                  </Button>
+                  <ViewCourseButton courseId={course.id
+                    
+                  } />
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {course.tags.slice(0, 3).map((tag) => (
