@@ -66,7 +66,6 @@ export default function CourseDetailPage() {
   const [expandedModules, setExpandedModules] = useState<
     Record<string, boolean>
   >({});
-  // const courses = await getCourses();
 
   useEffect(() => {
     async function fetchCourse() {
@@ -104,8 +103,17 @@ export default function CourseDetailPage() {
       }
     }
     fetchCourse();
-    // const foundCourse = courses.find((c) => c.id === courseId);
   }, [courseId, router, params.courseId]);
+  const [enrolled, setEnrolled] = useState(false);
+
+  useEffect(() => {
+    async function fetchEnrolledCourses() {
+      if (!course?.id) return;
+      let enrollStatus = await isEnrolled(course.id);
+      setEnrolled(enrollStatus);
+    }
+    fetchEnrolledCourses();
+  }, [course?.id, isEnrolled]);
 
   if (!course || authLoading) {
     return (
@@ -121,24 +129,23 @@ export default function CourseDetailPage() {
 
   const handleEnroll = async () => {
     if (!user) {
-      router.push(`/login?redirect=/academy/${course.slug}`);
+      router.push(`/login?redirect=/academy/${course.id}`);
       return;
     }
 
     await enrollCourseBySlug(course.slug);
     // Optionally redirect to the learning page or show a success message
-    router.push(`/academy/learn/${course.slug}`);
+    router.push(`/academy/learn/${course.id}`);
   };
 
   const handleGoToCourse = () => {
-    router.push(`/academy/learn/${course.slug}`);
+    router.push(`/academy/learn/${course.id}`);
   };
 
   const totalLessons = course.modules.reduce(
     (acc, module) => acc + module.lessons.length,
     0
   );
-  const enrolled = isEnrolled(course.id);
   const progress = enrolled ? getCourseProgress(course.id) : 0;
 
   const getLessonIcon = (type: CourseLesson["type"]) => {

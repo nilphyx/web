@@ -112,24 +112,24 @@ export const courses: Course[] = [];
 //           },
 //         ],
 //       },
-//       {
-//         id: "intro-ai-m2",
-//         title: "Module 2: Types of AI",
-//         lessons: [
-//           {
-//             id: "intro-ai-m2-l1",
-//             title: "Narrow vs. General AI",
-//             content: "Understanding the difference between ANI, AGI, and ASI.",
-//             type: "text",
-//           },
-//           {
-//             id: "intro-ai-m2-l2",
-//             title: "Machine Learning Overview",
-//             content: "Introduction to machine learning concepts.",
-//             type: "text",
-//           },
-//         ],
-//       },
+// {
+//   id: "intro-ai-m2",
+//   title: "Module 2: Types of AI",
+//   lessons: [
+// {
+//   id: "intro-ai-m2-l1",
+//   title: "Narrow vs. General AI",
+//   content: "Understanding the difference between ANI, AGI, and ASI.",
+//   type: "text",
+// },
+//     {
+//       id: "intro-ai-m2-l2",
+//       title: "Machine Learning Overview",
+//       content: "Introduction to machine learning concepts.",
+//       type: "text",
+//     },
+//   ],
+// },
 //     ],
 //   },
 //   {

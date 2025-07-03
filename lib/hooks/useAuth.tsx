@@ -44,7 +44,8 @@ interface AuthContextType {
   enrollCourse: (courseId: string) => Promise<void>;
   enrollCourseBySlug: (courseId: string) => Promise<void>;
   unenrollCourse: (courseId: string) => Promise<void>;
-  isEnrolled: (courseId: string) => boolean;
+  isEnrolled: (courseId: string) => Promise<boolean>;
+  // isEnrolled: (courseId: string) => boolean;
   enrolledCourses: EnrolledCourse[];
   completeLesson: (courseId: string, lessonId: string) => Promise<void>;
   isLessonCompleted: (courseId: string, lessonId: string) => boolean;
@@ -295,7 +296,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const enrollCourse = async (courseId: string) => {
     if (!user) return;
 
-    const alreadyEnrolled = enrolledCoursesData.includes(courseId);
+    // get the user enrollment status from DB
+    const alreadyEnrolled = await isEnrolled(courseId);
+    console.log("Already enrolled:", alreadyEnrolled, "for courseId:", courseId);
     if (alreadyEnrolled) return;
     // Create enrollment in DB
     const { error } = await supabase.from("enrollments").insert([
@@ -320,13 +323,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const enrollCourseBySlug = async (slug: string) => {
+    console.log("Enrolling in course with slug:", slug);
+    console.log("Available courses:", courses);
     const course = courses.find((c) => c.slug === slug);
+    console.log("Found course:", course);
     if (!course) {
       console.error("Course not found for slug:", slug);
       return;
     }
     await enrollCourse(course.id);
   };
+
   const unenrollCourse = async (courseId: string) => {
     if (!user) return;
 
@@ -364,8 +371,28 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     );
   };
 
-  const isEnrolled = (courseId: string) =>
-    enrolledCoursesData.includes(courseId);
+  async function isEnrolled(courseId: string): Promise<boolean> {
+    if (!user) return false;
+
+    const { data, error } = await supabase
+      .from("enrollments")
+      .select("id")
+      .eq("course_id", courseId)
+      .eq("student_id", user.id)
+      .single();
+
+    if (error) {
+      // log or handle errors
+      if (error.code !== "PGRST116")
+        console.error("Enrollment check failed:", error.message);
+      return false;
+    }
+
+    return !!data;
+  }
+
+  // const isEnrolled = (courseId: string) =>
+  //   enrolledCoursesData.includes(courseId);
 
   // const unenrollCourse = async (courseId: string) => {
   //   if (!user) return;
@@ -535,7 +562,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     .filter(Boolean) as EnrolledCourse[];
 
   const completeLesson = async (courseId: string, lessonId: string) => {
-    if (!user || !isEnrolled(courseId)) return;
+    const enrolled = await isEnrolled(courseId);
+
+    if (!user || !enrolled) return;
     setCourseProgressData((prev) => {
       const currentProgress = prev[courseId] || { completedLessons: [] };
       if (!currentProgress.completedLessons.includes(lessonId)) {
@@ -616,8 +645,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const generateCertificate = async (
     courseId: string
   ): Promise<Certificate | null> => {
-    if (!user || !isEnrolled(courseId) || getCourseProgress(courseId) < 100)
-      return null;
+    if (!user) return null;
+    const enrolled = await isEnrolled(courseId);
+    if (!enrolled || getCourseProgress(courseId) < 100) return null;
 
     const existingCertificate = issuedCertificatesData.find(
       (c) => c.userId === user.id && c.courseId === courseId

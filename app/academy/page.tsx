@@ -91,9 +91,7 @@ export default async function CourseListPage() {
                 </div>
 
                 <div className="mt-auto">
-                  <ViewCourseButton courseId={course.id
-                    
-                  } />
+                  <ViewCourseButton courseId={course.id} />
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {course.tags.slice(0, 3).map((tag) => (

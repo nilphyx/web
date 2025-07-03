@@ -1,11 +1,22 @@
-// import { createClient } from "@/lib/supabase/server";
 import { Course } from "@/lib/types";
 import { createClient } from "@/utils/supabase/client";
 
 export async function getCourses(): Promise<Course[]> {
   const supabase = createClient();
 
-  const { data, error } = await supabase.from("courses").select("*");
+  const { data, error } = await supabase
+    .from("courses")
+    .select(`
+      *,
+      modules (
+        *,
+        lessons (
+          *
+        )
+      )
+    `);
+
+    // .select(`*`);
 
   if (error) {
     console.error("[getCourses] Supabase Error:", error.message);
