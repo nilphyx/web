@@ -4,9 +4,7 @@ import { createClient } from "@/utils/supabase/client";
 export async function getCourses(): Promise<Course[]> {
   const supabase = createClient();
 
-  const { data, error } = await supabase
-    .from("courses")
-    .select(`
+  const { data, error } = await supabase.from("courses").select(`
       *,
       modules (
         *,
@@ -16,7 +14,8 @@ export async function getCourses(): Promise<Course[]> {
       )
     `);
 
-    // .select(`*`);
+  // .select(`*`);
+  console.log("[getCourses] Supabase Response:", data, error);
 
   if (error) {
     console.error("[getCourses] Supabase Error:", error.message);

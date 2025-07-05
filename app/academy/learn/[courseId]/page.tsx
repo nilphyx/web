@@ -21,7 +21,8 @@ function LearnCourseRedirectorContent() {
   useEffect(() => {
     async function fetchCourse() {
       const courses = await getCourses();
-      const foundCourse = courses.find((c) => c.slug === courseId);
+      const foundCourse = courses.find((c) => c.id === courseId);
+      console.log("Found course:", foundCourse);
       setCourse(foundCourse || null);
     }
     fetchCourse();
@@ -31,17 +32,21 @@ function LearnCourseRedirectorContent() {
     if (authLoading) return; // Wait for auth state to be determined
 
     if (!user) return;
-   
 
-    if (!course?.id) {
+    if (!courseId) {
       router.replace("/academy?error=no_course_id");
       return;
     }
 
-    if (!isEnrolled(course.id)) {
-      router.replace(`/academy/${course.id}?error=not_enrolled`); // Redirect to course detail page if not enrolled
+    if (!isEnrolled(courseId)) {
+      router.replace(`/academy/${courseId}?error=not_enrolled`); // Redirect to course detail page if not enrolled
       return;
     }
+    console.log("User is enrolled in the course:", courseId);
+    console.log("Course data:", course);
+    console.log("modules:", course?.modules.length);
+    console.log("lessons:", course?.modules[0]?.lessons.length);
+
     // const course = courses?.find((c) => c.id === courseId);
     if (
       course &&
@@ -50,7 +55,7 @@ function LearnCourseRedirectorContent() {
     ) {
       // const firstModuleId = course.modules[0].id;
       // const firstLessonId = course.modules[0].lessons[0].id;
-       // router.replace(
+      // router.replace(
       //   `/academy/learn/${course.id}/${firstModuleId}/${firstLessonId}`
       // );
 
@@ -58,19 +63,19 @@ function LearnCourseRedirectorContent() {
       const firstLesson = firstModule.lessons[0];
       const firstModuleId = firstModule.id;
       const firstLessonId = firstLesson.id;
-     
+
       // const firstQuizId = firstLesson.quizzes?.[0]?.id;
 
       let url = `/academy/learn/${course.id}/${firstModuleId}/${firstLessonId}`;
-      
+
       // if (firstQuizId) {
       //   url += `/${firstQuizId}`;
       // }
-  
+
       router.replace(url);
     } else {
       // Course has no lessons or modules, or course not found (though isEnrolled should prevent this for valid courses)
-      router.replace(`/academy/${course.id}?error=no_lessons`);
+      router.replace(`/academy/${courseId}?error=no_lessons`);
     }
   }, [authLoading, user, course, isEnrolled, router]);
 
