@@ -61,8 +61,7 @@ export const quizzes: Quiz[] = [
   },
 ];
 
-export const courses: Course[] = [];
-// [
+// export const courses: Course[] = [
 //   {
 //     id: "c8a5d9c3-d3cf-4aa3-879e-86bbfd6cfa8a",
 //     slug: "intro-to-ai",
@@ -101,7 +100,7 @@ export const courses: Course[] = [];
 //             title: "History of AI",
 //             content: "A journey through the milestones of AI development.",
 //             type: "video",
-//             videoId: "zL5jueGL1ys",
+//             video_url: "zL5jueGL1ys",
 //           },
 //           {
 //             id: "intro-ai-m1-l3",
@@ -112,24 +111,24 @@ export const courses: Course[] = [];
 //           },
 //         ],
 //       },
-// {
-//   id: "intro-ai-m2",
-//   title: "Module 2: Types of AI",
-//   lessons: [
-// {
-//   id: "intro-ai-m2-l1",
-//   title: "Narrow vs. General AI",
-//   content: "Understanding the difference between ANI, AGI, and ASI.",
-//   type: "text",
-// },
-//     {
-//       id: "intro-ai-m2-l2",
-//       title: "Machine Learning Overview",
-//       content: "Introduction to machine learning concepts.",
-//       type: "text",
-//     },
-//   ],
-// },
+//       {
+//         id: "intro-ai-m2",
+//         title: "Module 2: Types of AI",
+//         lessons: [
+//           {
+//             id: "intro-ai-m2-l1",
+//             title: "Narrow vs. General AI",
+//             content: "Understanding the difference between ANI, AGI, and ASI.",
+//             type: "text",
+//           },
+//           {
+//             id: "intro-ai-m2-l2",
+//             title: "Machine Learning Overview",
+//             content: "Introduction to machine learning concepts.",
+//             type: "text",
+//           },
+//         ],
+//       },
 //     ],
 //   },
 //   {
@@ -171,7 +170,7 @@ export const courses: Course[] = [];
 //             title: "Types of ML Problems",
 //             content: "Classification, Regression, Clustering.",
 //             type: "video",
-//             videoId: "KNAWp2S3w94",
+//             video_url: "KNAWp2S3w94",
 //           },
 //           {
 //             id: "ml-basics-m1-l3",
@@ -242,7 +241,7 @@ export const courses: Course[] = [];
 //             title: "Activation Functions",
 //             content: "Sigmoid, ReLU, Tanh, etc.",
 //             type: "video",
-//             videoId: "aircAruvnKk",
+//             video_url: "aircAruvnKk",
 //           },
 //         ],
 //       },
@@ -306,7 +305,7 @@ export const courses: Course[] = [];
 //             title: "The Attention Mechanism",
 //             content: "The key innovation leading to Transformers.",
 //             type: "video",
-//             videoId: "t_pP4Tj9L3s",
+//             video_url: "t_pP4Tj9L3s",
 //           },
 //         ],
 //       },

@@ -25,7 +25,6 @@ export default function CourseListPage() {
 
     const fetchCourses = async () => {
       const data = await getCourses();
-      console.log("[CourseListPage] Courses:", data);
       if (mounted) {
         setCourses(data);
         setLoading(false);

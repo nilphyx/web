@@ -7,7 +7,6 @@ import ProtectedRouteClient from "@/components/ProtectedRouteClient";
 import { useAuth } from "@/lib/hooks/useAuth";
 // fetch the courses from the db using a helper function
 import {
-  courses as allCoursesData,
   quizzes as allQuizzesData,
 } from "@/lib/data/courses";
 import {
@@ -79,14 +78,13 @@ function EnrolledCourseViewerPageContent() {
     async function fetchCourse() {
       const courses = await getCourses();
       const foundCourse = courses.find((c) => c.id === courseId);
-      console.log("Found course:", foundCourse);
+      // console.log("Found course:", foundCourse);
       setCourse(foundCourse || null);
     }
     fetchCourse();
   }, [courseId, router]);
 
   useEffect(() => {
-    console.log("Params:", { courseId, moduleId, lessonId });
     // wait untill the course is fetched
     if (!course) return;
 
@@ -98,7 +96,6 @@ function EnrolledCourseViewerPageContent() {
     if (!lesson)
       return router.replace("/academy/my-courses?error=lesson_not_found");
 
-    console.log("Current lesson:", lesson.type);
 
     const quiz =
       lesson.type === "quiz" && lesson.quizId

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { courses as allCoursesData } from "@/lib/data/courses";
 import Spinner from "@/components/Spinner";
 import ProtectedRouteClient from "@/components/ProtectedRouteClient";
 import { getCourses } from "@/lib/actions/getCourses";
@@ -13,7 +12,7 @@ function LearnCourseRedirectorContent() {
   const params = useParams();
   const router = useRouter();
   const courseId = params.courseId as string;
-  const { isEnrolled, isLoading: authLoading, user } = useAuth(); 
+  const { isEnrolled, isLoading: authLoading, user } = useAuth();
 
   const [course, setCourse] = useState<Course | null>(null);
 
@@ -41,23 +40,12 @@ function LearnCourseRedirectorContent() {
       router.replace(`/academy/${courseId}?error=not_enrolled`); // Redirect to course detail page if not enrolled
       return;
     }
-    console.log("User is enrolled in the course:", courseId);
-    console.log("Course data:", course);
-    console.log("modules:", course?.modules.length);
-    console.log("lessons:", course?.modules[0]?.lessons.length);
 
-    // const course = courses?.find((c) => c.id === courseId);
     if (
       course &&
       course.modules.length > 0 &&
       course.modules[0].lessons.length > 0
     ) {
-      // const firstModuleId = course.modules[0].id;
-      // const firstLessonId = course.modules[0].lessons[0].id;
-      // router.replace(
-      //   `/academy/learn/${course.id}/${firstModuleId}/${firstLessonId}`
-      // );
-
       const firstModule = course.modules[0];
       const firstLesson = firstModule.lessons[0];
       const firstModuleId = firstModule.id;

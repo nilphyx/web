@@ -23,13 +23,16 @@ export async function getCourses(): Promise<Course[]> {
         modules: modules (
           *,
            lessons:lessons (
-        *
-      )
+          *
+          )
         )
       `
   );
 
-  console.log("[getCourses] Supabase Response:", data, error);
+  // quiz: quizzes (
+  //     *
+  //   )
+  // console.log("[getCourses] Supabase Response:", data, error);
 
   if (error) {
     console.error("[getCourses] Supabase Error:", error.message);
