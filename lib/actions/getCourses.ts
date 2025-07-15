@@ -1,20 +1,36 @@
 import { Course } from "@/lib/types";
+import { createClient as serverClient } from "@/utils/supabase/server";
 import { createClient } from "@/utils/supabase/client";
 
+function safeJsonParse(str: string) {
+  try {
+    // clean the JSON string to avoid issues with extra quotes
+    const cleaned = str.trim();
+    if (cleaned.startsWith('"') && cleaned.endsWith('"')) {
+      return JSON.parse(JSON.parse(cleaned));
+    }
+    return JSON.parse(cleaned);
+  } catch {
+    return [];
+  }
+}
 export async function getCourses(): Promise<Course[]> {
   const supabase = createClient();
 
-  const { data, error } = await supabase.from("courses").select(`
-      *,
-      modules (
+  const { data, error } = await supabase
+    .from("courses")
+    .select(
+      `
         *,
-        lessons (
-          *
-        )
+        modules: modules (
+          *,
+           lessons:lessons (
+        *
       )
-    `);
+        )
+      `
+    );
 
-  // .select(`*`);
   console.log("[getCourses] Supabase Response:", data, error);
 
   if (error) {
@@ -30,12 +46,27 @@ export async function getCourses(): Promise<Course[]> {
     longDescription: raw.long_description,
     instructor: raw.instructor,
     category: raw.category,
-    tags: raw.tags || [],
-    imageUrl: raw.image_url,
+    tags: typeof raw.tags === "string" ? safeJsonParse(raw.tags) : raw.tags,
     modules: raw.modules || [],
     difficulty: raw.difficulty,
-    prerequisites: raw.prerequisites || [],
-    learningOutcomes: raw.learning_outcomes || [],
+    prerequisites:
+      typeof raw.prerequisites === "string"
+        ? safeJsonParse(raw.prerequisites)
+        : raw.prerequisites,
+    learningOutcomes:
+      typeof raw.learning_outcomes === "string"
+        ? safeJsonParse(raw.learning_outcomes)
+        : raw.learning_outcomes,
+    imageUrl: raw.image_url,
     estimatedDuration: raw.estimated_duration,
+    // lessons: (raw.modules || []).flatMap((module: any) =>
+    //   module.lessons.map((lesson: any) => ({
+    //     id: lesson.id,
+    //     title: lesson.title,
+    //     description: lesson.description,
+    //     content: lesson.content,
+    //     moduleId: module.id,
+    //   }))
+    // ),
   }));
 }
