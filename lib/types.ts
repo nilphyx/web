@@ -11,7 +11,7 @@ export interface CourseLesson {
   title: string;
   content: string; // Markdown content for the lesson
   type: 'video' | 'text' | 'quiz';
-  videoId?: string; // YouTube video ID if type is 'video'
+  video_url?: string; // YouTube video ID if type is 'video'
   quizId?: string; // Quiz ID if type is 'quiz'
 }
 

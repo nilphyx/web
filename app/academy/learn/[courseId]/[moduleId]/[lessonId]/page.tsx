@@ -90,11 +90,6 @@ function EnrolledCourseViewerPageContent() {
     // wait untill the course is fetched
     if (!course) return;
 
-    console.log("Course fetched:", course);
-
-    // if (!course)
-    //   return router.replace("/academy/my-courses?error=course_not_found");
-
     const module = course.modules.find((m) => m.id === moduleId);
     if (!module)
       return router.replace("/academy/my-courses?error=module_not_found");
@@ -102,6 +97,8 @@ function EnrolledCourseViewerPageContent() {
     const lesson = module.lessons.find((l) => l.id === lessonId);
     if (!lesson)
       return router.replace("/academy/my-courses?error=lesson_not_found");
+
+    console.log("Current lesson:", lesson.type);
 
     const quiz =
       lesson.type === "quiz" && lesson.quizId
@@ -207,15 +204,13 @@ function EnrolledCourseViewerPageContent() {
       <main className="flex-grow p-6 md:p-10 overflow-y-auto bg-neutral-50">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-2xl font-bold mb-1">{currentLesson.title}</h1>
-          <p className="text-sm text-neutral-500 mb-6">
-            Module: {currentModule.title}
-          </p>
+          <p className="text-sm text-neutral-500 mb-6">{currentModule.title}</p>
 
-          {currentLesson.type === "video" && currentLesson.videoId && (
-            <div className="aspect-video mb-6 rounded-lg overflow-hidden">
+          {currentLesson.type === "video" && currentLesson.video_url && (
+            <div className="aspect-video mb-6 rounded-lg overflow-hidden">    
               <iframe
                 className="w-full h-full"
-                src={`https://www.youtube-nocookie.com/embed/${currentLesson.videoId}`}
+                src={`https://www.youtube-nocookie.com/embed/${currentLesson.video_url}`}
                 sandbox="allow-scripts allow-same-origin"
                 title={currentLesson.title}
                 frameBorder="0"

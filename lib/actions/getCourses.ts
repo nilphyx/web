@@ -17,10 +17,8 @@ function safeJsonParse(str: string) {
 export async function getCourses(): Promise<Course[]> {
   const supabase = createClient();
 
-  const { data, error } = await supabase
-    .from("courses")
-    .select(
-      `
+  const { data, error } = await supabase.from("courses").select(
+    `
         *,
         modules: modules (
           *,
@@ -29,7 +27,7 @@ export async function getCourses(): Promise<Course[]> {
       )
         )
       `
-    );
+  );
 
   console.log("[getCourses] Supabase Response:", data, error);
 
@@ -59,14 +57,5 @@ export async function getCourses(): Promise<Course[]> {
         : raw.learning_outcomes,
     imageUrl: raw.image_url,
     estimatedDuration: raw.estimated_duration,
-    // lessons: (raw.modules || []).flatMap((module: any) =>
-    //   module.lessons.map((lesson: any) => ({
-    //     id: lesson.id,
-    //     title: lesson.title,
-    //     description: lesson.description,
-    //     content: lesson.content,
-    //     moduleId: module.id,
-    //   }))
-    // ),
   }));
 }
