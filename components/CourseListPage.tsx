@@ -19,6 +19,7 @@ export default function CourseListPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // fetch courses on mount
   useEffect(() => {
     let mounted = true;
 

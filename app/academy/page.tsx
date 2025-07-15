@@ -8,9 +8,5 @@ export const metadata = {
 };
 
 export default async function AcademyPage() {
-  // In a real app, fetch courses from an API
-  const courses = await getCourses();
-  console.log("[CourseListPage] Courses:", courses);
-  // cour s e s={cour s;es}
   return <CourseListPage  />;
 }

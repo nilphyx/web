@@ -67,14 +67,14 @@ export default function CourseDetailPage() {
     Record<string, boolean>
   >({});
 
-  useEffect(() => {
-    async function fetchCourse() {
-      const courses = await getCourses();
-      const foundCourse = courses.find((c) => c.id === params.courseId);
-      setCourse(foundCourse || null);
-    }
-    fetchCourse();
-  }, [params.courseId]);
+  // useEffect(() => {
+  //   async function fetchCourse() {
+  //     const courses = await getCourses();
+  //     const foundCourse = courses.find((c) => c.id === params.courseId);
+  //     setCourse(foundCourse || null);
+  //   }
+  //   fetchCourse();
+  // }, [params.courseId]);
 
   const {
     user,
@@ -83,7 +83,7 @@ export default function CourseDetailPage() {
     isEnrolled,
     getCourseProgress,
     isLoading: authLoading,
-  } = useAuth(); // isLoading is now correctly destructured
+  } = useAuth(); 
   const router = useRouter();
 
   useEffect(() => {

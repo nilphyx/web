@@ -13,7 +13,7 @@ function LearnCourseRedirectorContent() {
   const params = useParams();
   const router = useRouter();
   const courseId = params.courseId as string;
-  const { isEnrolled, isLoading: authLoading, user } = useAuth(); // isLoading is now correctly destructured
+  const { isEnrolled, isLoading: authLoading, user } = useAuth(); 
 
   const [course, setCourse] = useState<Course | null>(null);
 
@@ -29,9 +29,8 @@ function LearnCourseRedirectorContent() {
   }, [params.courseId, router]);
 
   useEffect(() => {
-    if (authLoading) return; // Wait for auth state to be determined
-
-    if (!user) return;
+    // wait for auth to load, check if user exists and if course is found before doing anything
+    if (authLoading || !user || !course) return;
 
     if (!courseId) {
       router.replace("/academy?error=no_course_id");
